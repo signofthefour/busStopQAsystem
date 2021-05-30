@@ -1,60 +1,30 @@
-import re
-from collections import namedtuple
+from pyvi import ViTokenizer, ViPosTagger
 
 
-Token = namedtuple('Token', ('name', 'value'))
-Node = namedtuple('Node', ('name', 'items'))
+class Word(object):
+    def __init__(self, word, tag, position):
+        self.word = word
+        self.tag = tag
+        self.position = position
+    
+    def print(self):
+        print("WORD: {} with POS TAG: {} in position: {}".format(self.word, self.tag, self.position))
 
+""" Tokenized and POS the input in VietNamese Language
+@param sentenece: Vietnamese sentence
 
-class Lexer(object):
-    """
-    A tokenizer that takes a string and produces a sequence of
-    `Token` instances. If no match found a SyntaxError is raised.
-    """
-    def __init__(self, patterns):
-        """
-        :param patterns: A sequence of (regex_pattern, token_name) tuples.
-         Patterns are order dependent: first match wins
-        """
-        self.patterns = [
-            (re.compile(bytes(p, 'utf8')), name) for p, name in patterns]
+@return: dictionary object in form: list(Word)
+"""
+def extractSentence(sentence):
+    tokenize =  ViTokenizer.tokenize(sentence)
+    posObject = ViPosTagger.postagging(tokenize)
+    sentenceFeature = list(map(lambda w, t, p: Word(w, t, p), posObject[0], posObject[1], list(range(0, len(posObject[0])))))
 
-    def lex(self, raw, ignore_spaces=True):
-        """
-        :param raw: an input string
-        :param ignore_spaces: if True, all whitespace characters are skipped
-        :return: generator of tokens
-        """
-        self.raw = bytearray(raw, 'utf8')
-        self.pos = 0
-        endpos = len(self.raw)
+    return sentenceFeature
 
-        while self.pos != endpos:
-            if ignore_spaces and self.raw[self.pos: self.pos + 1].isspace():
-                self.pos += 1
-                continue
-            for p, name in self.patterns:
-                m = p.match(self.raw[self.pos:])
-                if m is not None:
-                    val, offset = m.group(), m.end()
-                    yield Token(name, str(val, 'utf8'))
-                    self.pos += offset
-                    break
-            else:
-                self.error('Illegal character')
-        yield Token('EOF', None)
-
-    def error(self, message):
-        raise SyntaxError(message, self.get_debug_info())
-
-    def get_debug_info(self, f_name=None):
-        pos = self.pos + 1
-        raw = self.raw
-        line_no = raw[:pos].count(b'\n')
-        line_start = max(raw.rfind(b'\n'), 0)
-        line_end = max(raw.find(b'\n'), len(raw))
-        line = str(raw[line_start:line_end], 'utf-8')
-        offset = pos - line_start
-        return (f_name, line_no, offset, line)
-
-
+from tqdm import tqdm
+if __name__=="__main__":
+    sentence = u"Xe bus nào đến thành phố Huế lúc 20 giờ?"
+    words = extractSentence(sentence)
+    for word in words:
+        word.print()
