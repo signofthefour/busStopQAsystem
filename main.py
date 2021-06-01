@@ -14,5 +14,5 @@ if __name__=="__main__":
     for filename in os.listdir(question_dir):
         with open(os.path.join(question_dir, filename), encoding='utf-8') as f:
             sentence = getSentenceInformation(f.readline())
-            print(sentence)
-            # maltParser.parse(sentence=sentence)
+            # print(sentence)
+            maltParser.parse(sentence=sentence)

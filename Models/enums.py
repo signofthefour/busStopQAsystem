@@ -117,9 +117,32 @@ class RelationType(enum.Enum):
             return RelationType.DET
         return RelationType.NONAME
 
-
-class FeatureTemplateName(enum.Enum):
+class FeatureName(enum.Enum):
     POS_S0 = 0 
     POS_S1 = 1 
-    POS_Q0 = 2 
-    POS_Q1 = 3      
+    POS_B0 = 2 
+    POS_B1 = 3    
+
+"""
+POS TAGS PROVIDED BY PYVI:
+
+A - Adjective
+C - Coordinating conjunction
+E - Preposition
+I - Interjection
+L - Determiner
+M - Numeral
+N - Common noun
+Nc - Noun Classifier
+Ny - Noun abbreviation
+Np - Proper noun
+Nu - Unit noun
+P - Pronoun
+R - Adverb
+S - Subordinating conjunction
+T - Auxiliary, modal words
+V - Verb
+X - Unknown
+F - Filtered out (punctuation)
+
+"""

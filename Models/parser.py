@@ -1,6 +1,6 @@
 import Models.enums as enums
 from Models.sentence import *
-from Models.enums import ParserAction, RelationType
+from Models.enums import FeatureName, ParserAction, RelationType
 from Models.utils import tree
 
 import collections #for Counter
@@ -22,7 +22,7 @@ class Parser(object):
         self.__history = list()
 
     def init(self, sentence):
-        self.__stack = [Token(0)] #root
+        self.__stack = [Token(0)]
         self.__buffer = [token for token in sentence]
         self.__tree = tree(sentence, set_dependencies=False)
         self.__history = list()
@@ -53,7 +53,7 @@ class Parser(object):
 
             current_state = ParserState(self)
             # action = self.oracle.predict(configuration)
-            action = self.predictAction(current_state)
+            action = self.__predict_action(current_state)
 
             if action in avail_actions: self.__exec(action)
             else:                       self.shift()
@@ -78,7 +78,6 @@ class Parser(object):
 
     def __get_avail_actions(self):
         moves = set()
-
         if self.buffer_size() > 0:
             moves.add(ParserAction.SHIFT)
             if self.stack_size() > 0:
@@ -120,38 +119,36 @@ class Parser(object):
     def buffer_size(self):
         return len(self.__buffer)
 
-
-
     def __is_final_state(self):
         return len(self.__buffer) == 0 and len(self.__stack) == 1
 
-    @staticmethod
-    def get_transitions(sentence, tree):
-        parser = Parser().init(sentence)
-        transitions = list()
+    def __predict_action(self, currentState):
+        rightmost_stack_pos = currentState[FeatureName.POS_S0]
+        leftmost_buffer_pos = currentState[FeatureName.POS_B0]
+        # print('left most buffer: {} and right most stack: {}'.format(leftmost_buffer_pos, rightmost_stack_pos))
+        if rightmost_stack_pos == 'N': # noun
+            if leftmost_buffer_pos == 'P': # pronoun
+                """ 
+                pronoun appears after noun often is DET
+                e.g: Chiec xe [nay], chiec xe [nao]
+                """
+                return ParserAction.LEFT_DET
+            if leftmost_buffer_pos == 'Np': # Proper noun
+                """
+                Proper noun often appear after is Compound
+                e.g.: [Thành phố] [Huế]
+                """
+                return ParserAction.LEFT_COMPOUND
+            if leftmost_buffer_pos == 'N':
+                """
+                N after N:
+                e.g: [Thời gian] [xe buýt]
+                """
+                return ParserAction.LEFT_NMOD # it may be tmod, TODO: need more process here
+            if leftmost_buffer_pos == '':
+        
 
-        while not parser.__is_final_state():
-            do_shift = True
-
-            transitions.append(ParserState(parser))
-
-            if parser.stack_size() > 0 and parser.buffer_size() > 0:
-                q, s = parser.next_buffer().tid, parser.next_stack().tid
-                rel = tree.dependency_exists(q, s)
-                if rel:
-                    parser.left(rel)
-                    do_shift = False
-                else:
-                    rel = tree.dependency_exists(s, q)
-                    if rel and len(tree.get_dependencies_by_head(q)) == len(parser.get_dependencies_by_head(q)):
-                        parser.right(rel)
-                        do_shift = False
-
-            if do_shift and parser.buffer_size() > 0:
-                parser.shift()
-
-        return (transitions, parser.history())
-
+        return None
 
 class ParserState(object):
 
@@ -166,26 +163,29 @@ class ParserState(object):
 
             return iterable[index] if len(iterable) > threshold else None
 
-        self.s0 = get(stack, -1)
-        self.s1 = get(stack, -2)
-        self.q0 = get(buffer, 0)
-        self.q1 = get(buffer, 1)
+        self.s0 = get(stack, -1) # rightmost member in stack
+        self.s1 = get(stack, -2) # 'vice' rightmost member in stack
+        self.b0 = get(buffer, 0) # leftmost member in buffer
+        self.b1 = get(buffer, 1) # 'vice' leftmost member in buffer
+
+        # At this step, I only one to use 2 member which may influence to our decision
+        # on choosing the dependence relation or the next action we need to do
 
     def __getitem__(self, key): #key: enums.FeatureTemplateName
 
         try:
-            if key is enums.FeatureTemplateName.POS_S0:
+            if key is enums.FeatureName.POS_S0:
                 return self.s0.pos
-            if key is enums.FeatureTemplateName.POS_S1:
+            if key is enums.FeatureName.POS_S1:
                 return self.s1.pos
-            if key is enums.FeatureTemplateName.POS_Q0:
-                return self.q0.pos
-            if key is enums.FeatureTemplateName.POS_Q1:
-                return self.q1.pos
+            if key is enums.FeatureName.POS_B0:
+                return self.b0.pos
+            if key is enums.FeatureName.POS_B1:
+                return self.b1.pos
 
         except (TypeError, AttributeError):
             return None
 
 
-    def __str__(self):
-        return "s0: {}\ns1: {}\nq0: {}\nq1: {}\nq2: {}\nq3: {}\ns0h: {}\ns0l: {}\ns0r: {}\nq0l: {}".format(self.s0, self.s1, self.q0, self.q1, self.q2, self.q3, self.s0h, self.s0l, self.s0r, self.q0l)
+    # def __str__(self):
+    #     return "s0: {}\ns1: {}\nq0: {}\nq1: {}\nq2: {}\nq3: {}\ns0h: {}\ns0l: {}\ns0r: {}\nq0l: {}".format(self.s0, self.s1, self.q0, self.q1, self.q2, self.q3, self.s0h, self.s0l, self.s0r, self.q0l)
