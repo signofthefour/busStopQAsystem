@@ -54,7 +54,6 @@ class tree(object):
 
 
     def dependency_exists(self, head, dep, rel=None):
-
         try:
             res = next(filter(lambda triple: triple[0] == head and triple[1] == dep, self.dependencies))[-1]
             res = res if not rel or rel == res else False
@@ -100,12 +99,10 @@ def getSentenceInformation(rawSentence):
         map(lambda w, t, p: Token(id=p, wordform=w, pos=t), \
             posObject[0], posObject[1], list(range(0, len(posObject[0])))))
     [sentence.add_token(token) for token in tokens]
-    print(sentence)
     return sentence
 
 def nomalize(sentence):
     sentence = sentence.replace('bus', u'buýt')
-
     # change [HH:MM]HR format to 'HH giờ MM phút'
     match = re.search(r'([0-9][0-9]:[0-9][0-9][HR])\w+', sentence)
     oldTime = match.group(0) if match else None
