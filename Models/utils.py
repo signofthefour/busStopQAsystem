@@ -9,7 +9,7 @@ class tree(object):
         self.dependencies = set()
 
         for index, token in enumerate(sentence, 1):
-            self.nodes[index].init(token.wordform, token.pos)
+            self.nodes[index].init(wordform=token.wordform, pos=token.pos)
 
             if set_dependencies:
                 self.add_dependency(token.head, index, token.dtype)
@@ -24,7 +24,7 @@ class tree(object):
         self.nodes[int(dependent)].dtype = relation
         self.nodes[int(head)].add_dependency(self.nodes[dependent], relation)
         self.dependencies.add((head, dependent, relation))
-
+        # print(self.nodes)
 
     def get_leftmost_child(self, tid):
         siblings = filter(lambda tupla: tupla[0] == tid, self.dependencies)
@@ -84,10 +84,10 @@ class token_node(Token):
         return len(self.siblings) > 0
 
     def get_token(self):
-        return Token(self.tid, self.wordform, self.lemma, self.pos, self.xpos, self.feats, self.head, self.dtype)
+        return Token(self.tid, self.wordform, self.head, self.dtype)
 
     def __repr__(self):
-        return "({}, {}, {}) -> {}".format(self.tid, self.wordform, self.pos, [s.tid for s, rel in self.siblings])
+        return "({}, {}, {}) -> {}\n".format(self.tid, self.wordform, self.pos, [str(s.tid) + ' ' + str(rel) for s, rel in self.siblings])
 
 
 def getSentenceInformation(rawSentence):
@@ -96,18 +96,17 @@ def getSentenceInformation(rawSentence):
     tokenize =  ViTokenizer.tokenize(normSentence)
     posObject = ViPosTagger.postagging(tokenize)
     tokens = list(\
-        map(lambda w, t, p: Token(id=p, wordform=w, pos=t), \
+        map(lambda w, t, p: Token(id=p+1, wordform=w, pos=t), \
             posObject[0], posObject[1], list(range(0, len(posObject[0])))))
     [sentence.add_token(token) for token in tokens]
     return sentence
 
 def nomalize(sentence):
     sentence = sentence.replace('bus', u'buýt')
-    # change [HH:MM]HR format to 'HH giờ MM phút'
     match = re.search(r'([0-9][0-9]:[0-9][0-9][HR])\w+', sentence)
     oldTime = match.group(0) if match else None
     if oldTime:
-        newTime = oldTime[0:2] + " giờ " + oldTime[3:5] + " phút"
+        newTime = oldTime[0:2] + "." + oldTime[3:5] + " giờ"
         sentence = sentence.replace(oldTime, newTime)
     return sentence
 

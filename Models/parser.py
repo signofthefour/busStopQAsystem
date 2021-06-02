@@ -1,7 +1,8 @@
+from pickle import SHORT_BINBYTES
 import Models.enums as enums
 from Models.sentence import *
 from Models.enums import FeatureName, ParserAction, RelationType
-from Models.utils import tree
+from Models.utils import token_node, tree
 
 import collections #for Counter
 
@@ -46,63 +47,83 @@ class Parser(object):
         self.init(sentence)
 
         while not self.__is_final_state():
-            avail_actions = self.__get_avail_actions()
-
-            if len(avail_actions) == 0:
-                raise ParsingError("Unable to parse the sentence", self.__tree)
-
             current_state = ParserState(self)
-            # action = self.oracle.predict(configuration)
             action = self.__predict_action(current_state)
-
-            if action in avail_actions: self.__exec(action)
-            else:                       self.shift()
+            self.__exec(action)
 
         return self.__tree
 
     def __exec(self, action):
+        # print(action)
         if action is ParserAction.SHIFT:
             self.shift()
+        elif action is ParserAction.REDUCE:
+            self.reduce()
+        
         elif action is ParserAction.LEFT:
             self.left(RelationType.NONAME)
         elif action is ParserAction.LEFT_DOBJ:
             self.left(RelationType.DOBJ)
         elif action is ParserAction.LEFT_NSUBJ:
             self.left(RelationType.NSUBJ)
+        elif action is ParserAction.LEFT_DET:
+            self.left(RelationType.DET)
+        elif action is ParserAction.LEFT_COMPOUND:
+            self.left(RelationType.COMPOUND)
+        elif action is ParserAction.LEFT_NMOD:
+            self.left(RelationType.NMOD)
+        elif action is ParserAction.LEFT_ROOT:
+            self.left(RelationType.ROOT)
+        # elif action is ParserAction
+        elif action is ParserAction.RIGHT_ROOT:
+            self.right(RelationType.ROOT)
+        elif action is ParserAction.RIGHT_NMOD:
+            self.right(RelationType.NMOD)
+        elif action is ParserAction.RIGHT_COMPOUND:
+            self.right(RelationType.COMPOUND)
+        elif action is ParserAction.RIGHT_DET:
+            self.right(RelationType.DET)
         elif action is ParserAction.RIGHT:
             self.right(RelationType.NONAME)
         elif action is ParserAction.RIGHT_DOBJ:
             self.right(RelationType.DOBJ)
         elif action is ParserAction.RIGHT_NSUBJ:
             self.right(RelationType.NSUBJ)
-
-    def __get_avail_actions(self):
-        moves = set()
-        if self.buffer_size() > 0:
-            moves.add(ParserAction.SHIFT)
-            if self.stack_size() > 0:
-                moves.update({action for action in ParserAction})
-
-        return moves
+        elif action is ParserAction.RIGHT_PUNCT:
+            self.right(RelationType.PUNCT)
+        elif action is ParserAction.RIGHT_NUMMOD:
+            self.right(RelationType.NUMMOD)
+        elif action is ParserAction.RIGHT_CASE:
+            self.right(RelationType.CASE)
 
     def shift(self):
         self.__stack.append(self.__buffer[0])
         self.__buffer = self.__buffer[1:]
         self.__history.append(ParserAction.SHIFT)
-        print("shift")
+        # print("shift\n\n")
+    
+    def reduce(self):
+        self.__stack.pop()
+        self.__history.append(ParserAction.REDUCE)
+        # print("reduce\n\n")
 
     def left(self, opt):
+        # print([token.tid for token in self.__stack])
         dependent = self.__stack.pop()
         head = self.__buffer[0]
         self.__tree.add_dependency(head.tid, dependent.tid, opt)
         self.__history.append(ParserAction.get_parser_action("left", opt))
+        # print("left: {} -{}->{}\n\n".format(head.tid, opt, dependent.tid))
+        # print("shift left and history: {}".format(self.))
 
     def right(self, opt):
+        # print("right: {} <<<<<>>>>>>> {}".format([str(token) for token in self.__stack], [str(token) for token in self.__buffer]))
         dependent, self.__buffer = self.__buffer[0], self.__buffer[1:]
-        head = self.__stack.pop()
-        self.__buffer.insert(0, head)
-        self.__tree.add_dependency(head.tid , dependent.tid, opt)
+        head = self.__stack[-1]
+        self.__stack.insert(len(self.__stack), dependent)
+        self.__tree.add_dependency(head.tid, dependent.tid, opt)
         self.__history.append(ParserAction.get_parser_action("right", opt))
+        # print("right: {} -{}->{}\n\n".format(head.tid, opt, dependent.tid))
 
     def get_dependencies_by_head(self, head):
         return self.__tree.get_dependencies_by_head(head)
@@ -120,35 +141,193 @@ class Parser(object):
         return len(self.__buffer)
 
     def __is_final_state(self):
-        return len(self.__buffer) == 0 and len(self.__stack) == 1
+        return len(self.__buffer) == 0
+            #  and len(self.__stack) == 1
 
     def __predict_action(self, currentState):
         rightmost_stack_pos = currentState[FeatureName.POS_S0]
         leftmost_buffer_pos = currentState[FeatureName.POS_B0]
-        # print('left most buffer: {} and right most stack: {}'.format(leftmost_buffer_pos, rightmost_stack_pos))
-        if rightmost_stack_pos == 'N': # noun
-            if leftmost_buffer_pos == 'P': # pronoun
+        # print("stack size: {}, buffer size: {}".format(len(self.__stack), len(self.__buffer)))
+        # print('{}    {}'.format('[...' + str(rightmost_stack_pos) + ']', '[' + str(leftmost_buffer_pos) + '...]'))
+        if rightmost_stack_pos == None:
+
+            if leftmost_buffer_pos == 'V':
+                """
+                Find a root for sentence
+                """
+                return ParserAction.RIGHT_ROOT
+            if leftmost_buffer_pos == 'E':
+                """
+                We here define E will have same meaning as V in case
+                e.g.: "đến" with "đi đến"
+                """
+                return ParserAction.RIGHT_ROOT
+            
+            return ParserAction.SHIFT
+
+        
+        if rightmost_stack_pos == 'N':
+            if leftmost_buffer_pos == 'P':
                 """ 
                 pronoun appears after noun often is DET
                 e.g: Chiec xe [nay], chiec xe [nao]
                 """
-                return ParserAction.LEFT_DET
-            if leftmost_buffer_pos == 'Np': # Proper noun
+                return ParserAction.RIGHT_DET
+            if leftmost_buffer_pos == 'Np':
                 """
                 Proper noun often appear after is Compound
                 e.g.: [Thành phố] [Huế]
                 """
-                return ParserAction.LEFT_COMPOUND
+                return ParserAction.RIGHT_COMPOUND
             if leftmost_buffer_pos == 'N':
                 """
                 N after N:
                 e.g: [Thời gian] [xe buýt]
                 """
-                return ParserAction.LEFT_NMOD # it may be tmod, TODO: need more process here
-            if leftmost_buffer_pos == '':
-        
+                if self.history()[-1] == ParserAction.REDUCE:
+                    """
+                    In case that last action is REDUCE, the N now rarely depent on the head N
+                    e.g: [thanh pho]---(reduced [Hue]---[luc]
+                    """
+                    return ParserAction.REDUCE
+                return ParserAction.SHIFT
+            if leftmost_buffer_pos == 'E':
+                if ParserAction.LEFT_NSUBJ in self.history():
+                    """
+                    e.g.: [Thời gian | N] [xe buýt | N ] [từ | E]
+                    In this example, we got 'Thời gian' as a NMOD of 'từ'
+                    """
+                    return ParserAction.LEFT_NMOD
+                """
+                In Vietnamese, we can often see that V E maybe abbre -> E
+                e.g.: đi đến -> đến (same meaning as 'go to')
+                We here define that will be as a V
+                """
+                return ParserAction.LEFT_NSUBJ
+            if leftmost_buffer_pos == 'M':
+                """
+                In our story, numerical appear to indicate the time
+                e.g: [luc] [20]
+                """
+                return ParserAction.RIGHT_NUMMOD
+            if leftmost_buffer_pos == 'Ny':
+                """
+                In our story, abbreviation appear in case name of bus
+                e.g: [xe buyt] [B3]
+                """
+                return ParserAction.RIGHT_NMOD
+            elif leftmost_buffer_pos == 'F':
+                """
+                punctuation not depend on P only denpendent of ROOT
+                """
+                return ParserAction.REDUCE
 
-        return None
+            return ParserAction.SHIFT
+
+        if rightmost_stack_pos == 'E':
+
+            if leftmost_buffer_pos == 'N':
+                """
+                e.g.: 'đến thành phố'
+                """
+                if len([action for action in self.history() if action == ParserAction.RIGHT_DOBJ]):
+                    return ParserAction.RIGHT_NMOD
+                return ParserAction.RIGHT_DOBJ
+            if leftmost_buffer_pos == 'Np':
+                """
+                e.g.: [từ] [Huế]
+                """
+                return ParserAction.RIGHT_DOBJ
+            elif leftmost_buffer_pos == 'F':
+                """
+                punctuation not depend on P only denpendent of ROOT
+                """
+                if len(self.__stack) > 2:
+                    return ParserAction.REDUCE
+                return ParserAction.RIGHT_PUNCT
+            elif leftmost_buffer_pos == 'E':
+                """
+                e.g: 'từ ... đến' -> heuristic
+                """
+                return ParserAction.RIGHT_CASE
+
+            return ParserAction.SHIFT
+
+        if rightmost_stack_pos == 'P':
+            if leftmost_buffer_pos == 'E':
+                """
+                In our story, the pronoun only be used as a det so it should be reduce to create new arc
+                e.g.: Xe bus <-- [nao] [den]
+                """
+                return ParserAction.REDUCE
+            elif leftmost_buffer_pos == 'F':
+                """
+                punctuation not depend on P only denpendent of ROOT
+                """
+                return ParserAction.REDUCE
+
+            return ParserAction.SHIFT
+        
+        if rightmost_stack_pos == 'Np':
+            
+            if leftmost_buffer_pos == 'N':
+                """
+                After Np is a N often do not create a arc
+                e.g: thanh pho [Hue] [luc]
+                """
+                return ParserAction.REDUCE
+            
+            if leftmost_buffer_pos == 'E':
+                """
+                e.g.: [từ] DN (this should be reduced) [đến] Huế
+                """
+                return ParserAction.REDUCE
+
+            if leftmost_buffer_pos == 'F':
+                """
+                punctuation not depend on P only denpendent of ROOT
+                """
+                return ParserAction.REDUCE
+
+            return ParserAction.SHIFT
+        
+        if rightmost_stack_pos == 'M':
+            if leftmost_buffer_pos == 'Nu':
+                """
+                Unit noun is appear after number in order to modify the mean of M
+                But in our story, after normalize we can do not care about it, but for 
+                readability, I we keep it on my tree
+                """
+                return ParserAction.RIGHT_NMOD
+            if leftmost_buffer_pos == 'F':
+                """
+                punctuation not depend on P only denpendent of ROOT
+                """
+                return ParserAction.REDUCE
+
+            return ParserAction.SHIFT
+        
+        if rightmost_stack_pos == 'Nu':
+            if leftmost_buffer_pos == 'F':
+                """
+                punctuation not depend on P only denpendent of ROOT
+                """
+                return ParserAction.REDUCE
+            
+            return ParserAction.SHIFT
+        
+        if rightmost_stack_pos == 'Ny':
+            if leftmost_buffer_pos == 'E':
+                """
+                abbreviation here is Name of bus
+                the name often appear AFTER noun, so, it should be reduced
+                e.g.: [xe buýt] [B3] [từ]
+                """
+                return ParserAction.REDUCE
+            
+            return ParserAction.SHIFT
+
+        return ParserAction.SHIFT
 
 class ParserState(object):
 

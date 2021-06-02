@@ -83,4 +83,4 @@ class Token(object):
         self.__dtype = RelationType.get_relation_type(dtype) if dtype else None
 
     def __str__(self):
-        return "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t_\t_".format(self.tid, self.wordform, self.lemma, self.pos, self.xpos, self.feats, self.head if self.head else 0, self.dtype.name.lower() if self.dtype else "noname")
+        return "{}\t{:>15}\t\t{:<15}\t{}\t{}".format(self.tid, self.wordform, self.pos, self.head if self.head else None, self.dtype.name.lower() if self.dtype else "noname")
