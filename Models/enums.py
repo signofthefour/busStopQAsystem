@@ -33,6 +33,7 @@ class ParserAction(enum.Enum):
     RIGHT_CASE = 19
     LEFT_ROOT = 20
     RIGHT_ROOT = 21
+    RIGHT_PUNCT = 22
 
 
     @classmethod
@@ -77,6 +78,8 @@ class ParserAction(enum.Enum):
             elif relation is RelationType.ROOT:
                 return ParserAction.RIGHT_ROOT
             return ParserAction.RIGHT
+        elif action == "reduce":
+            return ParserAction.REDUCE
         return ParserAction.SHIFT
 
 
@@ -92,6 +95,7 @@ class RelationType(enum.Enum):
     CASE = 7
     DET = 8
     ROOT = 9
+    PUNCT = 10
 
     @classmethod
     def get_relation_type(cls, relation):
