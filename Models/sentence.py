@@ -18,7 +18,7 @@ class Sentence(object):
         self.__tokens.clear()
 
     def __str__(self):
-        return " ".join('(' + token.wordform + '{'+token.pos+'})' for token in self.__tokens)
+        return " ".join(token.wordform for token in self.__tokens)
 
     def __iter__(self):
         for token in self.__tokens:

@@ -23,7 +23,7 @@ class Parser(object):
         self.__history = list()
 
     def init(self, sentence):
-        self.__stack = [Token(0)]
+        self.__stack = [Token(0)] # this init token is not belong to sentence, just a heuristic for easy coding
         self.__buffer = [token for token in sentence]
         self.__tree = tree(sentence, set_dependencies=False)
         self.__history = list()
@@ -108,22 +108,17 @@ class Parser(object):
         # print("reduce\n\n")
 
     def left(self, opt):
-        # print([token.tid for token in self.__stack])
         dependent = self.__stack.pop()
         head = self.__buffer[0]
         self.__tree.add_dependency(head.tid, dependent.tid, opt)
         self.__history.append(ParserAction.get_parser_action("left", opt))
-        # print("left: {} -{}->{}\n\n".format(head.tid, opt, dependent.tid))
-        # print("shift left and history: {}".format(self.))
 
     def right(self, opt):
-        # print("right: {} <<<<<>>>>>>> {}".format([str(token) for token in self.__stack], [str(token) for token in self.__buffer]))
         dependent, self.__buffer = self.__buffer[0], self.__buffer[1:]
         head = self.__stack[-1]
         self.__stack.insert(len(self.__stack), dependent)
         self.__tree.add_dependency(head.tid, dependent.tid, opt)
         self.__history.append(ParserAction.get_parser_action("right", opt))
-        # print("right: {} -{}->{}\n\n".format(head.tid, opt, dependent.tid))
 
     def get_dependencies_by_head(self, head):
         return self.__tree.get_dependencies_by_head(head)
@@ -147,8 +142,6 @@ class Parser(object):
     def __predict_action(self, currentState):
         rightmost_stack_pos = currentState[FeatureName.POS_S0]
         leftmost_buffer_pos = currentState[FeatureName.POS_B0]
-        # print("stack size: {}, buffer size: {}".format(len(self.__stack), len(self.__buffer)))
-        # print('{}    {}'.format('[...' + str(rightmost_stack_pos) + ']', '[' + str(leftmost_buffer_pos) + '...]'))
         if rightmost_stack_pos == None:
 
             if leftmost_buffer_pos == 'V':
@@ -350,7 +343,7 @@ class ParserState(object):
         # At this step, I only one to use 2 member which may influence to our decision
         # on choosing the dependence relation or the next action we need to do
 
-    def __getitem__(self, key): #key: enums.FeatureTemplateName
+    def __getitem__(self, key): #key: enums.FeatureName
 
         try:
             if key is enums.FeatureName.POS_S0:
@@ -365,6 +358,3 @@ class ParserState(object):
         except (TypeError, AttributeError):
             return None
 
-
-    # def __str__(self):
-    #     return "s0: {}\ns1: {}\nq0: {}\nq1: {}\nq2: {}\nq3: {}\ns0h: {}\ns0l: {}\ns0r: {}\nq0l: {}".format(self.s0, self.s1, self.q0, self.q1, self.q2, self.q3, self.s0h, self.s0l, self.s0r, self.q0l)
