@@ -20,5 +20,6 @@ if __name__=="__main__":
             # import pdb; pdb.set_trace();
             # import pdb; pdb.set_trace()
             print("sentence: {}".format(sentence))
-            GrammarParsing(tree).parsing()
+            grammarStructure = GrammarParsing(tree).parsing()
+            print(grammarStructure.getString())
             print('=======================================')

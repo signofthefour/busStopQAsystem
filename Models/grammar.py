@@ -294,7 +294,8 @@ class GrammarParsing():
             elif type(child) == WhatTime:
                 isWhich = False
         grammarStructure = S(children, isWhich)
-        print(grammarStructure.getString())
+        # print(grammarStructure.getString())
+        return grammarStructure
 
     def __parsing(self, node):
         node.wordform = node.wordform.lower()
