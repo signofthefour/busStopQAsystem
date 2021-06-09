@@ -56,6 +56,26 @@ TIME_MODE -> [0-23]['00'|'30'] 'giờ'
 BUS-NAME -> 'B'[1-6]
 ```
 
-## Reference
+***The result is immitiate the result of grammar parser with semantic of nltk package.***
 
-I used the concept of parser design with **my own significant changes** of the parser from [this open-source repo](https://github.com/cursecatcher/py-malt-parser) for my parser with **new workflow** to adapt with no-training-step and more complexity of the required grammar of this project.
+4. After create a parser which utilize the dependency tree from the malt parser. I added semantic features into each Grammar parsing. My idea is to create 3 main feature:
+
+    - BUS
+    - ROUTE
+    - TIME
+
+These features can contribute further action in our context. With [these design](./Models/grammar.py), I can scale up for more questions. And because of this progress, I can easyly get logical form as you can see in result.
+
+5. I create a Query class to handle the action of query: standardize (for create query to work with database), create API for work with database, manage and return answer.
+
+6. Answer the question as in result.
+
+## Reference and dependency
+
+- [py-malt-patser](https://github.com/cursecatcher/py-malt-parser): for my parser with **new workflow** to adapt with no-training-step and more complexity of the required grammar of this project.
+
+- [Nirve et al., 2008](https://www.researchgate.net/publication/220355552_Algorithms_for_Deterministic_Incremental_Dependency_Parsing)
+
+- [pyvi](https://pypi.org/project/pyvi/)
+
+- [Semantics](http://www.nltk.org/howto/semantics.html)

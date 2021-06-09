@@ -1,0 +1,9 @@
+1	        Xe_buýt		N              	3	nsubj
+2	            nào		P              	1	det
+3	            đến		E              	None	root
+4	      thành_phố		N              	3	dobj
+5	            Huế		Np             	4	compound
+6	            lúc		N              	3	nmod
+7	          20.00		M              	6	nummod
+8	            giờ		Nu             	7	nmod
+9	              ?		F              	3	punct

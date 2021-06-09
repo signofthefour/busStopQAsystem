@@ -1,0 +1,15 @@
+S[GAP<t1> SEM<(HOWLONG(t1)) & (BUS(B3, b2)) & (t.ROUTE(SRC-CITY(NAME(DANANG, c1)), DST-CITY(NAME(HUE, c2)), BUS(B3, b2), t))>,VAR<t1>]
+	(RTIME-QUERY[SEM<HOWLONG(t1)>,VAR<t1>])
+	(BUS-NP[SEM<BUS(B3, b2) & t.ROUTE(SRC-CITY(NAME(DANANG, c1)), DST-CITY(NAME(HUE, c2)), BUS(B3, b2), t)>,VAR<b1>]
+		(BUS-CNP[SEM<BUS(B3, b2)>,VAR<b1>]
+			(BUS-N[SEM<XEBUYT>,VAR<b1>])
+			(BUS-NAME[SEM<BUS(B3, b2)>,VAR<b1>]))
+		(BUS-ROUTE[SEM<t.ROUTE(SRC-CITY(NAME(DANANG, c1)), DST-CITY(NAME(HUE, c2)), BUS(B3, b2), t)>,VAR<r>]
+			(từ
+			(BUS-SRC[SEM<d b t.ROUTE(SRC-CITY(NAME(DANANG, c1)), d, b, t)>,VAR<r1>]
+				(CITY-CNP[SEM<NAME(DANANG, c1)>,VAR<c1>]
+					(CITY-NAME[SEM<DANANG>,VAR<c1>])))
+			(đến
+			(BUS-DEST[SEM<\s b t.ROUTE(s, DST-CITY(NAME(HUE, c2)), b, t)>,VAR<r2>]
+				(CITY-CNP[SEM<NAME(HUE, c2)>,VAR<c2>]
+					(CITY-NAME[SEM<HUE>,VAR<c2>]))))))
