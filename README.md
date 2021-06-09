@@ -12,7 +12,63 @@ An classical implemented question answering for bus stop/station
 pip install -r requirements.txt
 ```
 
-## Contributions
+Import your question in [here](./Input/question) where each question is store in a txt file and then:
+
+```bash
+python main.py
+```
+
+***In my local machine, the python is call python version 3, you should you python verion 3 in your work/test***
+
+## Folder structure
+
+```txt
+busStopQAsystem
+ ┣ Input
+ ┃ ┗ question
+ ┃ ┃ ┣ question1.txt
+ ┃ ┃ ┣ question2.txt
+ ┃ ┃ ┣ question3.txt
+ ┃ ┃ ┗ question4.txt
+ ┣ Models
+ ┃ ┣ __init__.py
+ ┃ ┣ database.py
+ ┃ ┣ enums.py
+ ┃ ┣ grammar.py
+ ┃ ┣ parser.py
+ ┃ ┣ query.py
+ ┃ ┣ sentence.py
+ ┃ ┗ utils.py
+ ┣ Output
+ ┃ ┣ question1
+ ┃ ┃ ┣ output_b.ans
+ ┃ ┃ ┣ output_c.ans
+ ┃ ┃ ┣ output_d.ans
+ ┃ ┃ ┣ output_e.ans
+ ┃ ┃ ┗ output_f.ans
+ ┃ ┣ question2
+ ┃ ┃ ┣ output_b.ans
+ ┃ ┃ ┣ output_c.ans
+ ┃ ┃ ┣ output_d.ans
+ ┃ ┃ ┣ output_e.ans
+ ┃ ┃ ┗ output_f.ans
+ ┃ ┣ question3
+ ┃ ┃ ┣ output_b.ans
+ ┃ ┃ ┣ output_c.ans
+ ┃ ┃ ┣ output_d.ans
+ ┃ ┃ ┣ output_e.ans
+ ┃ ┃ ┗ output_f.ans
+ ┃ ┗ question4
+ ┃ ┃ ┣ output_b.ans
+ ┃ ┃ ┣ output_c.ans
+ ┃ ┃ ┣ output_d.ans
+ ┃ ┃ ┣ output_e.ans
+ ┃ ┃ ┗ output_f.ans
+ ┣ LICENSE
+ ┣ README.md
+ ┣ main.py
+ ┗ requirements.txt
+```
 
 ### POS step
 
@@ -70,6 +126,67 @@ These features can contribute further action in our context. With [these design]
 
 6. Answer the question as in result.
 
+## Answers for question 1
+
+1. Dependency relationship
+
+```txt
+1	        Xe_buýt		N              	3	nsubj
+2	            nào		P              	1	det
+3	            đến		E              	None	root
+4	      thành_phố		N              	3	dobj
+5	            Huế		Np             	4	compound
+6	            lúc		N              	3	nmod
+7	          20.00		M              	6	nummod
+8	            giờ		Nu             	7	nmod
+9	              ?		F              	3	punct
+```
+
+2. Grammar parsing tree
+
+```txt
+S[GAP<b1> SEM<(WHICHBUS(b1)) & (\s ROUTE(s, DST-CITY(NAME(HUE, c2)), b1, \dt.TIME(dt, 20.00))) & (\dt.TIME(dt, 20.00))>,VAR<b1>]
+	(WHICH-QUERY[SEM<WHICHBUS(b1)>,VAR<b1>]
+		(BUS-N[SEM<NAME(None, None)>,VAR<b1>])
+		(QDET[SEM<NÀO>,VAR<?b>]))
+	(BUS-NP[SEM<\s ROUTE(s, DST-CITY(NAME(HUE, c2)), b1, \dt.TIME(dt, 20.00)) & \dt.TIME(dt, 20.00)>,VAR<r>]
+		(BUS-ROUTE[SEM<\s ROUTE(s, DST-CITY(NAME(HUE, c2)), b1, \dt.TIME(dt, 20.00))>,VAR<r>]
+			(đến
+			(BUS-DEST[SEM<\s b t.ROUTE(s, DST-CITY(NAME(HUE, c2)), b, t)>,VAR<r2>]
+				(CITY-CNP[SEM<NAME(HUE, c2)>,VAR<c2>]
+					(CITY-N[SEM<THANHPHO>,VAR<c3>])
+					(CITY-NAME[SEM<HUE>,VAR<c2>]))))
+		(BUS-TIME[SEM<\dt.TIME(dt, 20.00)>,VAR<t1>]
+			(P-TIME[SEM<lúc>])
+			(TIME-MOD[SEM<20.00>]))))
+```
+
+3. Logical form
+
+```txt
+WHICH-QUERY(WHICHBUS(b1) & ROUTE(s1, DST-CITY(HUE, c2), b1, TIME(dt1, 20.00)) & TIME(dt1, 20.00))
+```
+
+4. Semantic procedure form
+
+```txt
+PRINT-ALL ?b1(BUS ?b1) ATIME(?b1 HUE 20.00) DTIME(?b1 ?s ?dt)
+```
+
+5. Answer
+
+```
+Kết quả tra cứu tuyến xe yêu cầu:
+	- Tuyến xe B3 đi từ Đà Nẵng vào lúc 16:00 giờ đến Huế vào lúc 20:00 giờ.
+```
+
+### All question are store in [Output](./Output)
+
+1. [Question 1](./Output/question1)
+2. [Question 2](./Output/question2)
+3. [Question 3](./Output/question3)
+4. [Question 4](./Output/question4)
+
 ## Reference and dependency
 
 - [py-malt-patser](https://github.com/cursecatcher/py-malt-parser): for my parser with **new workflow** to adapt with no-training-step and more complexity of the required grammar of this project.
@@ -79,3 +196,7 @@ These features can contribute further action in our context. With [these design]
 - [pyvi](https://pypi.org/project/pyvi/)
 
 - [Semantics](http://www.nltk.org/howto/semantics.html)
+
+## Contributions
+
+[Nguyen Tan Dat](fb.com/sotfdat)

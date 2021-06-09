@@ -3,7 +3,7 @@ from Models.utils import tree
 import pdb
 from Models.enums import RelationType
 
-CITYSEM={'hồ_chí_minh': 'HCMC', 'đà_nẵng': 'DANANG', 'huế': 'HUE'}
+CITYSEM={'hồ_chí_minh': 'HCMC', 'đà_nẵng': 'DANANG', 'huế': 'HUE', 'hà_nội': 'HN'}
 
 class WHICH:
     def __init__(self, x) -> None:

@@ -1,0 +1,11 @@
+S[GAP<b1> SEM<(WHICHBUS(b1)) & (\s t.ROUTE(s, DST-CITY(NAME(HN, c3)), b1, t))>,VAR<b1>]
+	(WHICH-QUERY[SEM<WHICHBUS(b1)>,VAR<b1>]
+		(BUS-N[SEM<NAME(None, None)>,VAR<b1>])
+		(QDET[SEM<NÀO>,VAR<?b>]))
+	(BUS-NP[SEM<\s t.ROUTE(s, DST-CITY(NAME(HN, c3)), b1, t)>,VAR<r>]
+		(BUS-ROUTE[SEM<\s t.ROUTE(s, DST-CITY(NAME(HN, c3)), b1, t)>,VAR<r>]
+			(đến
+			(BUS-DEST[SEM<\s b t.ROUTE(s, DST-CITY(NAME(HN, c3)), b, t)>,VAR<r2>]
+				(CITY-CNP[SEM<NAME(HN, c3)>,VAR<c3>]
+					(CITY-N[SEM<THANHPHO>,VAR<c3>])
+					(CITY-NAME[SEM<HN>,VAR<c3>]))))))

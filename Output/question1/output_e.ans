@@ -1,1 +1,1 @@
-PRINT-ALL ?b1(BUS ?b1) ATIME(?b1 HUE 20.00) DTIME(?b1 ?s None)
+PRINT-ALL ?b1(BUS ?b1) ATIME(?b1 HUE 20.00) DTIME(?b1 ?s ?dt)

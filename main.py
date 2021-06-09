@@ -5,11 +5,14 @@ import os
 
 from Models.utils import getSentenceInformation
 from Models.parser import Parser
+from Models.database import DATABASE, Dtime
 
 # hyperparams
 question_dir = "./Input/question/"
 input_dir = "./Input"
 output_dir = "./Output"
+
+CITY_ABR = {'HN': 'Hà Nội', 'HCMC': 'thành phố Hồ Chí Minh', 'DANANG': 'Đà Nẵng', 'HUE': 'Huế'}
 
 def saveOuput(dir, data):
     with open(dir, 'w') as f:
@@ -30,20 +33,54 @@ if __name__=="__main__":
             # Get dependency tree
             tree = maltParser.parse(sentence=sentence)
             saveOuput(os.path.join(output_dir, filename[:-4], 'output_b.ans'), str(tree))
+
+            # Get grammar relation
             grammarStructure = GrammarParsing(tree).parsing()
-            # print(grammarStructure.getString())
             saveOuput(os.path.join(output_dir, filename[:-4], 'output_c.ans'), grammarStructure.getString())
-            # Get logical form
             sem = grammarStructure.SEM
             if type(sem[0]) in [WHICH]:
+                # Get logical form
                 logicalForm = "WHICH-QUERY({})".format(' & '.join([s.getLogical() for s in sem]))
+                saveOuput(os.path.join(output_dir, filename[:-4], 'output_d.ans'), logicalForm)
+                
+                # Get semantic procedure
                 q = Query('WHICH-QUERY',sem[0],  [s for s in sem if type(s) == ROUTE][0])
-            if type(sem[0]) in [HOWLONG]:
-                logicalForm = "RTIME-QUERY({})".format(' & '.join([s.getLogical() for s in sem]))
-                q = Query('RTIME-QUERY', sem[0],  [s for s in sem if type(s) == ROUTE][0])
+                saveOuput(os.path.join(output_dir, filename[:-4], 'output_e.ans'), str(q))
 
-            saveOuput(os.path.join(output_dir, filename[:-4], 'output_d.ans'), logicalForm)
-            saveOuput(os.path.join(output_dir, filename[:-4], 'output_e.ans'), str(q))
+                # Get answer
+                answer = "Kết quả tra cứu tuyến xe yêu cầu:"
+                results = q.execute(DATABASE)
+                if len(results) == 0:
+                    answer += '\nKhông có tuyến xe phù hợp nào.'
+                for atime, dtime in results:
+                    answer += '\n\t- Tuyến xe {} đi từ {} vào lúc {} giờ đến {} vào lúc {} giờ.'.format(dtime.bus,
+                        CITY_ABR[dtime.city], dtime.time, CITY_ABR[atime.city], atime.time)
+                saveOuput(os.path.join(output_dir, filename[:-4], 'output_f.ans'), answer)
+            
+            if type(sem[0]) in [HOWLONG]:
+                # Get logical form
+                logicalForm = "RTIME-QUERY({})".format(' & '.join([s.getLogical() for s in sem]))
+                saveOuput(os.path.join(output_dir, filename[:-4], 'output_d.ans'), logicalForm)
+
+                # Get semantic procedure
+                q = Query('RTIME-QUERY', sem[0],  [s for s in sem if type(s) == ROUTE][0])
+                saveOuput(os.path.join(output_dir, filename[:-4], 'output_e.ans'), str(q))
+
+                # Get answer
+                results = q.execute(DATABASE)
+                answer = "Kết quả tra cứu tuyến xe yêu cầu:"
+                if len(results) == 0:
+                    answer += '\nKhông có tuyến xe phù hợp nào.'
+                for rtime in results:
+                    answer += '\n\t- Thời gian chuyến xe {} đi từ {} đến {} là {} giờ.'.format(
+                        rtime.bus,
+                        rtime.src,
+                        rtime.dest,
+                        rtime.time
+                    )
+                saveOuput(os.path.join(output_dir, filename[:-4], 'output_f.ans'), answer)
+
             # q = Query('WHICH-QUERY', [s for s in sem if type(s) == WHICH][0],  [s for s in sem if type(s) == ROUTE][0])
+            
 
 
