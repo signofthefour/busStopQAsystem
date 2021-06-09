@@ -1,0 +1,8 @@
+1	      Thời_gian		N              	4	nmod
+2	        xe_buýt		N              	4	nsubj
+3	             B3		Ny             	2	nmod
+4	             từ		E              	None	root
+5	        Đà_Nẵng		Np             	4	dobj
+6	            đến		E              	4	case
+7	            Huế		Np             	6	dobj
+8	              ?		F              	4	punct
