@@ -18,7 +18,7 @@ Import your question in [here](./Input/question) where each question is store in
 python main.py --input_dir ./Input/question --output_dir ./Output
 ```
 
-***In my local machine, the python is call python version 3, you should you python verion 3 in your work/test***
+***In my local machine, the python cmd calls python version 3, you should use python verion 3 in your work/test***
 
 ## Folder structure
 
