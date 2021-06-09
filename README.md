@@ -15,7 +15,7 @@ pip install -r requirements.txt
 Import your question in [here](./Input/question) where each question is store in a txt file and then:
 
 ```bash
-python main.py
+python main.py --input_dir ./Input/question --output_dir ./Output
 ```
 
 ***In my local machine, the python is call python version 3, you should you python verion 3 in your work/test***

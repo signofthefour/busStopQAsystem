@@ -9,7 +9,6 @@ from Models.database import DATABASE, Dtime
 
 # hyperparams
 question_dir = "./Input/question/"
-input_dir = "./Input"
 output_dir = "./Output"
 
 CITY_ABR = {'HN': 'Hà Nội', 'HCMC': 'thành phố Hồ Chí Minh', 'DANANG': 'Đà Nẵng', 'HUE': 'Huế'}
@@ -18,7 +17,9 @@ def saveOuput(dir, data):
     with open(dir, 'w') as f:
         f.write(data)
 
-if __name__=="__main__":
+def main(args):
+    question_dir = args.input_dir
+    output_dir = args.output_dir
     maltParser = Parser()
     for filename in os.listdir(question_dir):
 
@@ -83,4 +84,21 @@ if __name__=="__main__":
             # q = Query('WHICH-QUERY', [s for s in sem if type(s) == WHICH][0],  [s for s in sem if type(s) == ROUTE][0])
             
 
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description="NLP Assignment")
+    
+    parser.add_argument(
+      '--input_dir',
+      default= "./Input/question",
+      help= "directory of questions"
+      )
 
+    parser.add_argument(
+      '--output_dir',
+      default= "./Output",
+      help= "directory of output"
+      )
+    
+    args = parser.parse_args()
+    main(args)
