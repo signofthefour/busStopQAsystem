@@ -40,34 +40,15 @@ busStopQAsystem
  ┃ ┣ sentence.py
  ┃ ┗ utils.py
  ┣ Output
- ┃ ┣ question1
- ┃ ┃ ┣ output_b.ans
- ┃ ┃ ┣ output_c.ans
- ┃ ┃ ┣ output_d.ans
- ┃ ┃ ┣ output_e.ans
- ┃ ┃ ┗ output_f.ans
- ┃ ┣ question2
- ┃ ┃ ┣ output_b.ans
- ┃ ┃ ┣ output_c.ans
- ┃ ┃ ┣ output_d.ans
- ┃ ┃ ┣ output_e.ans
- ┃ ┃ ┗ output_f.ans
- ┃ ┣ question3
- ┃ ┃ ┣ output_b.ans
- ┃ ┃ ┣ output_c.ans
- ┃ ┃ ┣ output_d.ans
- ┃ ┃ ┣ output_e.ans
- ┃ ┃ ┗ output_f.ans
- ┃ ┗ question4
- ┃ ┃ ┣ output_b.ans
- ┃ ┃ ┣ output_c.ans
- ┃ ┃ ┣ output_d.ans
- ┃ ┃ ┣ output_e.ans
- ┃ ┃ ┗ output_f.ans
- ┣ LICENSE
+ ┃ ┣ output_a.txt
+ ┃ ┣ output_b.txt
+ ┃ ┣ output_c.txt
+ ┃ ┣ output_d.txt
+ ┃ ┣ output_e.txt
+ ┃ ┗ output_f.txt
+ ┣ .DS_Store
  ┣ README.md
- ┣ main.py
- ┗ requirements.txt
+ ┗ main.py
 ```
 
 ### POS step
