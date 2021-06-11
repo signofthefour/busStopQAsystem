@@ -1,0 +1,2 @@
+I used malt-parser, which is suggested by Mrs. Tuoi, as described in README.md.
+And everything is from scratch so I use my own syntax analyzer in parser.py

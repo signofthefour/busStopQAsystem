@@ -1,0 +1,36 @@
+1	        Xe_buýt		N              	3	nsubj
+2	            nào		P              	1	det
+3	            đến		E              	None	root
+4	      thành_phố		N              	3	dobj
+5	         Hà_Nội		Np             	4	compound
+6	              ?		F              	3	punct
+
+
+1	        Xe_buýt		N              	3	nsubj
+2	            nào		P              	1	det
+3	            đến		E              	None	root
+4	      thành_phố		N              	3	dobj
+5	    Hồ_Chí_Minh		Np             	4	compound
+6	              ?		F              	3	punct
+
+
+1	      Thời_gian		N              	4	nmod
+2	        xe_buýt		N              	4	nsubj
+3	             B3		Ny             	2	nmod
+4	             từ		E              	None	root
+5	        Đà_Nẵng		Np             	4	dobj
+6	            đến		E              	4	case
+7	            Huế		Np             	6	dobj
+8	              ?		F              	4	punct
+
+
+1	        Xe_buýt		N              	3	nsubj
+2	            nào		P              	1	det
+3	            đến		E              	None	root
+4	      thành_phố		N              	3	dobj
+5	            Huế		Np             	4	compound
+6	            lúc		N              	3	nmod
+7	          20.00		M              	6	nummod
+8	            giờ		Nu             	7	nmod
+9	              ?		F              	3	punct
+

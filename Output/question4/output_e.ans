@@ -1,1 +1,0 @@
-PRINT-ALL ?b1(BUS ?b1) ATIME(?b1 HN ?at) DTIME(?b1 ?s ?dt)

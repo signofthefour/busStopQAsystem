@@ -1,0 +1,54 @@
+S[GAP<b1> SEM<(WHICHBUS(b1)) & (\s t.ROUTE(s, DST-CITY(NAME(HN, c3)), b1, t))>,VAR<b1>]
+	(WHICH-QUERY[SEM<WHICHBUS(b1)>,VAR<b1>]
+		(BUS-N[SEM<NAME(None, None)>,VAR<b1>])
+		(QDET[SEM<NÀO>,VAR<?b>]))
+	(BUS-NP[SEM<\s t.ROUTE(s, DST-CITY(NAME(HN, c3)), b1, t)>,VAR<r>]
+		(BUS-ROUTE[SEM<\s t.ROUTE(s, DST-CITY(NAME(HN, c3)), b1, t)>,VAR<r>]
+			(đến
+			(BUS-DEST[SEM<\s b t.ROUTE(s, DST-CITY(NAME(HN, c3)), b, t)>,VAR<r2>]
+				(CITY-CNP[SEM<NAME(HN, c3)>,VAR<c3>]
+					(CITY-N[SEM<THANHPHO>,VAR<c3>])
+					(CITY-NAME[SEM<HN>,VAR<c3>]))))))
+
+S[GAP<b1> SEM<(WHICHBUS(b1)) & (\s t.ROUTE(s, DST-CITY(NAME(HCMC, c0)), b1, t))>,VAR<b1>]
+	(WHICH-QUERY[SEM<WHICHBUS(b1)>,VAR<b1>]
+		(BUS-N[SEM<NAME(None, None)>,VAR<b1>])
+		(QDET[SEM<NÀO>,VAR<?b>]))
+	(BUS-NP[SEM<\s t.ROUTE(s, DST-CITY(NAME(HCMC, c0)), b1, t)>,VAR<r>]
+		(BUS-ROUTE[SEM<\s t.ROUTE(s, DST-CITY(NAME(HCMC, c0)), b1, t)>,VAR<r>]
+			(đến
+			(BUS-DEST[SEM<\s b t.ROUTE(s, DST-CITY(NAME(HCMC, c0)), b, t)>,VAR<r2>]
+				(CITY-CNP[SEM<NAME(HCMC, c0)>,VAR<c0>]
+					(CITY-N[SEM<THANHPHO>,VAR<c3>])
+					(CITY-NAME[SEM<HCMC>,VAR<c0>]))))))
+
+S[GAP<t1> SEM<(HOWLONG(t1)) & (BUS(B3, b2)) & (t.ROUTE(SRC-CITY(NAME(DANANG, c1)), DST-CITY(NAME(HUE, c2)), BUS(B3, b2), t))>,VAR<t1>]
+	(RTIME-QUERY[SEM<HOWLONG(t1)>,VAR<t1>])
+	(BUS-NP[SEM<BUS(B3, b2) & t.ROUTE(SRC-CITY(NAME(DANANG, c1)), DST-CITY(NAME(HUE, c2)), BUS(B3, b2), t)>,VAR<b1>]
+		(BUS-CNP[SEM<BUS(B3, b2)>,VAR<b1>]
+			(BUS-N[SEM<XEBUYT>,VAR<b1>])
+			(BUS-NAME[SEM<BUS(B3, b2)>,VAR<b1>]))
+		(BUS-ROUTE[SEM<t.ROUTE(SRC-CITY(NAME(DANANG, c1)), DST-CITY(NAME(HUE, c2)), BUS(B3, b2), t)>,VAR<r>]
+			(từ
+			(BUS-SRC[SEM<d b t.ROUTE(SRC-CITY(NAME(DANANG, c1)), d, b, t)>,VAR<r1>]
+				(CITY-CNP[SEM<NAME(DANANG, c1)>,VAR<c1>]
+					(CITY-NAME[SEM<DANANG>,VAR<c1>])))
+			(đến
+			(BUS-DEST[SEM<\s b t.ROUTE(s, DST-CITY(NAME(HUE, c2)), b, t)>,VAR<r2>]
+				(CITY-CNP[SEM<NAME(HUE, c2)>,VAR<c2>]
+					(CITY-NAME[SEM<HUE>,VAR<c2>]))))))
+
+S[GAP<b1> SEM<(WHICHBUS(b1)) & (\s ROUTE(s, DST-CITY(NAME(HUE, c2)), b1, \dt.TIME(dt, 20.00))) & (\dt.TIME(dt, 20.00))>,VAR<b1>]
+	(WHICH-QUERY[SEM<WHICHBUS(b1)>,VAR<b1>]
+		(BUS-N[SEM<NAME(None, None)>,VAR<b1>])
+		(QDET[SEM<NÀO>,VAR<?b>]))
+	(BUS-NP[SEM<\s ROUTE(s, DST-CITY(NAME(HUE, c2)), b1, \dt.TIME(dt, 20.00)) & \dt.TIME(dt, 20.00)>,VAR<r>]
+		(BUS-ROUTE[SEM<\s ROUTE(s, DST-CITY(NAME(HUE, c2)), b1, \dt.TIME(dt, 20.00))>,VAR<r>]
+			(đến
+			(BUS-DEST[SEM<\s b t.ROUTE(s, DST-CITY(NAME(HUE, c2)), b, t)>,VAR<r2>]
+				(CITY-CNP[SEM<NAME(HUE, c2)>,VAR<c2>]
+					(CITY-N[SEM<THANHPHO>,VAR<c3>])
+					(CITY-NAME[SEM<HUE>,VAR<c2>]))))
+		(BUS-TIME[SEM<\dt.TIME(dt, 20.00)>,VAR<t1>]
+			(P-TIME[SEM<lúc>])
+			(TIME-MOD[SEM<20.00>]))))
