@@ -1,6 +1,6 @@
 # Bus Stop Q&A system
 
-An classical implemented question answering for bus stop/station
+An implemented of question answering for bus stop/station with classical technique
 
 ---
 
